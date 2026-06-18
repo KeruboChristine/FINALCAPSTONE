@@ -2,7 +2,7 @@
 
 ## A Multivariate Time Series, Machine Learning, and Deep Learning Approach to Food Security Forecasting in Kenya
 
----
+
 
 # TABLE OF CONTENTS
 
@@ -24,15 +24,14 @@
 11. Target Variable and Features
 12. Technology Stack
 13. Project Architecture
-14. Database Design
-15. Methodology
+14. Methodology
 16. Food Security Index Construction
 17. Forecasting and Predictive Modeling
 
 * 17.1 ARIMA
 * 17.2 Linear Regression
-* 17.3 Decision Tree Regressor
-* 17.4 Random Forest Regressor
+* 17.3 Decision Tree 
+* 17.4 Random Forest 
 * 17.5 LSTM
 * 17.6 GRU
 
@@ -41,10 +40,9 @@
 20. GitHub Repository Structure
 21. Expected Deliverables
 22. Expected Impact
-23. Future Improvements
-24. References
 
----
+
+
 
 # 1. EXECUTIVE SUMMARY
 
@@ -56,7 +54,7 @@ The platform will support monitoring, analysis, visualization, and forecasting o
 
 The project demonstrates the complete data science lifecycle from data collection and storage to forecasting and dashboard development.
 
----
+
 
 # 2. INTRODUCTION
 
@@ -66,7 +64,7 @@ Despite Kenya's strong agricultural sector, food insecurity continues to affect 
 
 This project seeks to provide a data-driven approach for understanding and forecasting food security conditions.
 
----
+
 
 # 3. BACKGROUND OF THE STUDY
 
@@ -81,7 +79,7 @@ A comprehensive analysis requires combining these dimensions into a unified fram
 
 Advances in data science, machine learning, and deep learning provide opportunities to identify patterns in historical data and forecast future food security conditions.
 
----
+
 
 # 4. PROBLEM STATEMENT
 
@@ -98,26 +96,26 @@ Most reports are descriptive and retrospective, limiting proactive planning.
 
 There is a need for an integrated platform capable of monitoring current food security conditions and forecasting future risks.
 
----
+
 
 # 5. PROJECT GOAL
 
 To develop a Food Security Intelligence and Forecasting Platform that analyzes and predicts food security trends in Kenya using statistical forecasting, machine learning, and deep learning techniques.
 
----
+
 
 # 6. SPECIFIC OBJECTIVES
 
 1. Collect and integrate food security data from multiple sources.
-2. Develop a centralized SQL database.
+2. Develop a centralized SQL database to store data.
 3. Analyze food security trends.
 4. Construct a Food Security Index.
-5. Develop dashboards using Excel and Tableau.
+5. Develop dashboards using Tableau.
 6. Forecast future food security conditions.
 7. Compare forecasting models.
 8. Identify key food security drivers.
 
----
+
 
 # 7. SCOPE OF THE PROJECT
 
@@ -131,7 +129,7 @@ The project covers:
 * Food Security Index development
 * Forecasting future food security conditions
 
----
+
 
 # 8. UNDERSTANDING FOOD SECURITY
 
@@ -152,7 +150,7 @@ Question:
 
 "Is enough food available?"
 
----
+
 
 ## Food Access
 
@@ -169,7 +167,7 @@ Question:
 
 "Can people access food?"
 
----
+
 
 ## Food Affordability
 
@@ -186,7 +184,7 @@ Question:
 
 "Can people afford food?"
 
----
+
 
 ## Food Quality (Nutrition)
 
@@ -203,7 +201,7 @@ Question:
 
 "Is the food nutritious?"
 
----
+
 
 # 9. RESEARCH QUESTIONS
 
@@ -213,7 +211,7 @@ Question:
 4. Can machine learning and deep learning improve food security forecasting?
 5. Which forecasting model performs best?
 
----
+
 
 # 10. DATA SOURCES
 
@@ -244,10 +242,8 @@ Market Prices
 Data Collection Methods
 
 * Downloads
-* APIs
-* Selenium Web Scraping
+* APIs - Web Scraping
 
----
 
 # 11. TARGET VARIABLE AND FEATURES
 
@@ -264,7 +260,6 @@ The Food Security Index will combine:
 
 into a single score.
 
----
 
 ## Features
 
@@ -300,7 +295,7 @@ Population Features
 * Population
 * Employment Rate
 
----
+
 
 # 12. TECHNOLOGY STACK
 
@@ -325,7 +320,6 @@ Analysis
 
 Visualization
 
-* Excel
 * Tableau
 
 Machine Learning
@@ -346,7 +340,7 @@ Deployment
 
 * Streamlit
 
----
+
 
 # 13. PROJECT ARCHITECTURE
 
@@ -370,25 +364,8 @@ Dashboard Development
 ↓
 Reporting
 
----
 
-# 14. DATABASE DESIGN
-
-FoodSecurityDB
-
-Tables:
-
-* AgriculturalProduction
-* ClimateIndicators
-* MarketPrices
-* EconomicIndicators
-* NutritionIndicators
-* FoodSecurityIndex
-* ForecastResults
-
----
-
-# 15. METHODOLOGY
+# 14. METHODOLOGY
 
 Phase 1: Data Collection
 
@@ -398,7 +375,7 @@ Output:
 
 Raw datasets.
 
----
+
 
 Phase 2: Database Development
 
@@ -408,7 +385,7 @@ Output:
 
 Centralized database.
 
----
+
 
 Phase 3: Data Cleaning
 
@@ -423,7 +400,7 @@ Output:
 
 Clean dataset.
 
----
+
 
 Phase 4: Exploratory Data Analysis
 
@@ -438,7 +415,7 @@ Output:
 
 Insights and visualizations.
 
----
+
 
 Phase 5: Feature Engineering
 
@@ -448,7 +425,7 @@ Output:
 
 Model-ready dataset.
 
----
+
 
 Phase 6: Food Security Index Construction
 
@@ -458,7 +435,7 @@ Output:
 
 Food Security Index.
 
----
+
 
 # 16. FOOD SECURITY INDEX CONSTRUCTION
 
@@ -484,7 +461,7 @@ Food Quality Score
 
 The FSI becomes the main target variable for forecasting.
 
----
+
 
 # 17. FORECASTING AND PREDICTIVE MODELING
 
@@ -502,7 +479,7 @@ Why use it:
 
 Provides a strong statistical baseline and demonstrates classical forecasting techniques.
 
----
+
 
 ## 17.2 Linear Regression
 
@@ -518,9 +495,9 @@ Why use it:
 
 Simple and interpretable benchmark.
 
----
 
-## 17.3 Decision Tree Regressor
+
+## 17.3 Decision Tree 
 
 Purpose:
 
@@ -534,9 +511,9 @@ Why use it:
 
 Easy to interpret.
 
----
 
-## 17.4 Random Forest Regressor
+
+## 17.4 Random Forest
 
 Purpose:
 
@@ -550,7 +527,7 @@ Why use it:
 
 Reduces overfitting and improves robustness.
 
----
+
 
 ## 17.5 Long Short-Term Memory (LSTM)
 
@@ -566,7 +543,7 @@ Why use it:
 
 Food security depends on long-term agricultural, climate, and economic trends.
 
----
+
 
 ## 17.6 Gated Recurrent Unit (GRU)
 
@@ -582,7 +559,7 @@ Why use it:
 
 Faster training and often similar performance to LSTM.
 
----
+
 
 # 18. MODEL EVALUATION
 
@@ -596,15 +573,10 @@ Comparison Objective
 
 Determine whether advanced models outperform traditional forecasting methods.
 
----
+
 
 # 19. DASHBOARD DEVELOPMENT
 
-Excel Dashboard
-
-* Food Production Analysis
-* Food Price Monitoring
-* Nutrition Analysis
 
 Tableau Dashboard
 
@@ -612,7 +584,7 @@ Tableau Dashboard
 * Interactive Trend Analysis
 * Forecast Visualization
 
----
+
 
 # 20. GITHUB REPOSITORY STRUCTURE
 
@@ -644,15 +616,14 @@ food-security-intelligence-platform/
 
 └── .gitignore
 
----
+
 
 # 21. EXPECTED DELIVERABLES
 
 * SQL Database
-* Selenium Scrapers
+* Web Scrapers
 * Clean Dataset
 * Food Security Index
-* Excel Dashboard
 * Tableau Dashboard
 * ARIMA Forecasting Model
 * Machine Learning Models
@@ -661,24 +632,8 @@ food-security-intelligence-platform/
 * Streamlit Application
 * GitHub Repository
 
----
+
 
 # 22. EXPECTED IMPACT
 
 The platform will provide data-driven insights for monitoring and forecasting food security conditions, supporting evidence-based planning and policy development.
-
----
-
-# 23. FUTURE IMPROVEMENTS
-
-* County-level forecasting
-* Satellite imagery integration
-* Real-time dashboards
-* Crop disease detection using computer vision
-* Transformer-based forecasting models
-
----
-
-# 24. REFERENCES
-
-References will include all datasets, reports, academic literature, and data sources used throughout the project.
