@@ -1,639 +1,470 @@
-# KENYA FOOD SECURITY INTELLIGENCE AND FORECASTING PLATFORM
+After reviewing your README and the work you've actually completed, I would make some major changes.
 
-## A Multivariate Time Series, Machine Learning, and Deep Learning Approach to Food Security Forecasting in Kenya
+Your project has evolved from a broad "Food Security Intelligence Platform" into a much stronger and more focused **County-Level Food Security Forecasting System for Kenya** using real IPC food security data, market prices, rainfall, SQL integration, and forecasting models.
 
+Most importantly:
 
+* You are **not building a Food Security Index anymore**.
+* Your target variable is already available: **IPC3plus Population**.
+* You removed agricultural production due to severe data alignment issues.
+* You removed poverty data because it was regional while the rest of your analysis is county-level.
+* You are working with **four pillars of food security conceptually**, but forecasting food insecurity using the strongest available indicators.
 
-# TABLE OF CONTENTS
+---
 
-1. Executive Summary
-2. Introduction
-3. Background of the Study
-4. Problem Statement
-5. Project Goal
-6. Specific Objectives
-7. Scope of the Project
-8. Understanding Food Security
+# KENYA FOOD SECURITY FORECASTING SYSTEM
 
-   * 8.1 Food Availability
-   * 8.2 Food Access
-   * 8.3 Food Affordability
-   * 8.4 Food Quality (Nutrition)
-9. Research Questions
-10. Data Sources
-11. Target Variable and Features
-12. Technology Stack
-13. Project Architecture
-14. Methodology
-16. Food Security Index Construction
-17. Forecasting and Predictive Modeling
+## A County-Level Multivariate Time Series Forecasting Approach Using IPC Food Security, Food Prices, and Rainfall Data
 
-* 17.1 ARIMA
-* 17.2 Linear Regression
-* 17.3 Decision Tree 
-* 17.4 Random Forest 
-* 17.5 LSTM
-* 17.6 GRU
-
-18. Model Evaluation
-19. Dashboard Development
-20. GitHub Repository Structure
-21. Expected Deliverables
-22. Expected Impact
-
-
-
+---
 
 # 1. EXECUTIVE SUMMARY
 
-Food security remains one of Kenya's most significant development challenges. While agricultural production, food prices, climate conditions, and nutrition indicators are often analyzed separately, food security is influenced by the interaction of all these factors.
+Food insecurity remains a persistent challenge in Kenya, particularly within arid and semi-arid regions where climatic shocks, market disruptions, and economic pressures affect household access to food.
 
-This project aims to develop a Food Security Intelligence and Forecasting Platform that integrates agricultural, economic, climate, demographic, and nutritional data into a unified analytical system.
+This project develops a county-level Food Security Forecasting System that integrates food security assessments, staple food prices, and rainfall indicators into a unified forecasting framework.
 
-The platform will support monitoring, analysis, visualization, and forecasting of food security conditions in Kenya through statistical forecasting, machine learning, and deep learning techniques.
+The study uses Integrated Food Security Phase Classification (IPC) data as the target measure of food insecurity and combines it with maize prices, bean prices, rainfall, and rainfall anomalies to forecast future food security conditions.
 
-The project demonstrates the complete data science lifecycle from data collection and storage to forecasting and dashboard development.
+The project demonstrates the complete data science workflow including:
 
+* Data collection
+* SQL database development
+* Data integration
+* Exploratory analysis
+* Feature engineering
+* Statistical forecasting
+* Machine learning
+* Deep learning
 
+---
 
-# 2. INTRODUCTION
+# 2. PROBLEM STATEMENT
 
-Food security exists when all people have physical, social, and economic access to sufficient, safe, and nutritious food that meets their dietary needs for an active and healthy life.
+Food insecurity assessments are often produced after food crises have already developed.
 
-Despite Kenya's strong agricultural sector, food insecurity continues to affect many households due to droughts, climate variability, economic pressures, rising food prices, and unequal access to resources.
+Government agencies, humanitarian organizations, and policymakers require tools capable of forecasting future food insecurity conditions before crises emerge.
 
-This project seeks to provide a data-driven approach for understanding and forecasting food security conditions.
+Kenya experiences recurring food insecurity due to:
 
-
-
-# 3. BACKGROUND OF THE STUDY
-
-Traditional food security assessments often focus on a single indicator such as crop production or food prices. However, food security is a multidimensional issue involving:
-
-* Food Availability
-* Food Access
-* Food Affordability
-* Food Quality
-
-A comprehensive analysis requires combining these dimensions into a unified framework.
-
-Advances in data science, machine learning, and deep learning provide opportunities to identify patterns in historical data and forecast future food security conditions.
-
-
-
-# 4. PROBLEM STATEMENT
-
-Food insecurity remains a recurring challenge in Kenya due to:
-
-* Climate variability
-* Droughts
+* Drought
+* Rainfall variability
 * Rising food prices
-* Population growth
-* Economic instability
-* Poor access to nutritious food
+* Market shocks
+* Climate change
 
-Most reports are descriptive and retrospective, limiting proactive planning.
+Current assessments provide valuable monitoring information but limited predictive capability.
 
-There is a need for an integrated platform capable of monitoring current food security conditions and forecasting future risks.
+There is a need for a forecasting framework capable of predicting future food insecurity levels using historical food security, climate, and market data.
 
+---
 
+# 3. PROJECT GOAL
 
-# 5. PROJECT GOAL
+To develop a county-level food security forecasting system capable of predicting future food insecurity conditions in Kenya using multivariate time-series, machine learning, and deep learning models.
 
-To develop a Food Security Intelligence and Forecasting Platform that analyzes and predicts food security trends in Kenya using statistical forecasting, machine learning, and deep learning techniques.
+---
 
+# 4. SPECIFIC OBJECTIVES
 
+### Objective 1
 
-# 6. SPECIFIC OBJECTIVES
+Develop a centralized SQL database containing food security, rainfall, and market price data.
 
-1. Collect and integrate food security data from multiple sources.
-2. Develop a centralized SQL database to store data.
-3. Analyze food security trends.
-4. Construct a Food Security Index.
-5. Develop dashboards using Tableau.
-6. Forecast future food security conditions.
-7. Compare forecasting models.
-8. Identify key food security drivers.
+### Objective 2
 
+Analyze spatial and temporal patterns of food insecurity across Kenyan counties.
 
+### Objective 3
 
-# 7. SCOPE OF THE PROJECT
+Identify relationships between food insecurity, rainfall conditions, and staple food prices.
 
-The project covers:
+### Objective 4
 
-* Agricultural production analysis
-* Climate analysis
-* Economic analysis
-* Nutrition analysis
-* Food price monitoring
-* Food Security Index development
-* Forecasting future food security conditions
+Develop predictive models capable of forecasting future food insecurity levels.
 
+### Objective 5
 
+Compare classical statistical models, machine learning models, and deep learning models.
 
-# 8. UNDERSTANDING FOOD SECURITY
+### Objective 6
 
-## Food Availability
+Identify the most important drivers of food insecurity in Kenya.
 
-Measures whether enough food exists.
+---
 
-Indicators:
+# 5. UNDERSTANDING FOOD SECURITY
 
-* Maize production
-* Wheat production
-* Rice production
-* Crop yields
+Food security exists when people have reliable access to sufficient, safe, and nutritious food.
+
+The study is guided by the four internationally recognized pillars of food security.
+
+---
+
+## 5.1 Food Availability
+
+Food availability refers to the physical presence of food within a region.
+
+Examples:
+
+* Agricultural production
 * Food imports
-* Livestock production
+* Market supply
 
-Question:
+Although production data was explored during preliminary analysis, inconsistencies across data sources led to its exclusion from the forecasting framework.
 
-"Is enough food available?"
+Food availability is indirectly represented through food security assessments and market conditions.
 
+---
 
+## 5.2 Food Access
 
-## Food Access
+Food access refers to the ability of individuals and households to obtain food.
 
-Measures whether people can physically obtain food.
+Indicators used:
 
-Indicators:
+* IPC Phase Classification
+* IPC3+ Population
 
-* Employment rates
-* Population distribution
-* Market accessibility
-* Infrastructure
+Food access is directly reflected through the number of people experiencing food insecurity.
 
-Question:
+---
 
-"Can people access food?"
+## 5.3 Food Affordability
 
+Food affordability measures whether households can financially access food.
 
+Indicators used:
 
-## Food Affordability
+* Maize Price
+* Bean Price
 
-Measures whether people can afford food.
+Maize and beans were selected because they are among Kenya's most widely consumed staple foods.
 
-Indicators:
+Changes in staple food prices often precede worsening food security conditions.
 
-* Food prices
-* Inflation
-* Poverty levels
-* Household income
+---
 
-Question:
+## 5.4 Food Stability
 
-"Can people afford food?"
+Food stability measures the consistency of food availability and access over time.
 
-
-
-## Food Quality (Nutrition)
-
-Measures nutritional adequacy.
-
-Indicators:
-
-* Calories
-* Protein supply
-* Dietary diversity
-* Malnutrition indicators
-
-Question:
-
-"Is the food nutritious?"
-
-
-
-# 9. RESEARCH QUESTIONS
-
-1. What factors influence food security in Kenya?
-2. How have food security indicators changed over time?
-3. Which variables most strongly affect food security?
-4. Can machine learning and deep learning improve food security forecasting?
-5. Which forecasting model performs best?
-
-
-
-# 10. DATA SOURCES
-
-Agricultural Data
-
-* FAOSTAT
-* KilimoSTAT
-
-Economic Data
-
-* KNBS
-* World Bank
-
-Climate Data
-
-* CHIRPS Rainfall Data
-* NASA POWER
-
-Food Security Data
-
-* FEWS NET
-* World Food Programme
-
-Market Prices
-
-* RATIN
-
-Data Collection Methods
-
-* Downloads
-* APIs - Web Scraping
-
-
-# 11. TARGET VARIABLE AND FEATURES
-
-## Target Variable
-
-Food Security Index (FSI)
-
-The Food Security Index will combine:
-
-* Availability
-* Access
-* Affordability
-* Quality
-
-into a single score.
-
-
-## Features
-
-Agricultural Features
-
-* Maize Production
-* Wheat Production
-* Rice Production
-* Bean Production
-* Crop Yield
-* Harvested Area
-
-Climate Features
+Indicators used:
 
 * Rainfall
-* Temperature
-* Drought Index
+* Rainfall Anomaly
 
-Economic Features
+Rainfall variability is a major determinant of food security in Kenya, particularly within ASAL counties.
 
-* Inflation
-* GDP Growth
-* Food Prices
-* Poverty Rate
+Rainfall anomalies help identify periods of drought or unusually wet conditions.
 
-Nutrition Features
+---
 
-* Calories
-* Protein Supply
+# 6. STUDY AREA
 
-Population Features
+The analysis focuses on Kenyan counties with sufficient overlap across:
 
-* Population
-* Employment Rate
+* IPC Food Security Assessments
+* Market Price Data
+* Rainfall Data
 
+Counties with insufficient observations were excluded to ensure robust forecasting.
 
+Final dataset:
 
-# 12. TECHNOLOGY STACK
+```text
+23 Counties
+2021–2026
+Approximately 500 observations
+```
 
-Programming
+---
 
-* Python
+# 7. DATA SOURCES
 
-Data Collection
+## Food Security Data
 
-* Selenium
-* BeautifulSoup
+Source:
 
-Database
+World Food Programme
 
-* SQL
-* SQLite
+Variables:
 
-Analysis
+* IPC3plus Population
+* IPC3plus Fraction
 
-* Pandas
-* NumPy
+---
 
-Visualization
+## Market Price Data
 
-* Tableau
+Source:
 
-Machine Learning
+World Food Programme
 
-* Scikit-Learn
+Variables:
 
-Deep Learning
+* Maize Price
+* Bean Price
 
-* TensorFlow
-* Keras
+---
 
-Version Control
+## Climate Data
 
-* Git
-* GitHub
+Source:
 
-Deployment
+World Food Programme
 
-* Streamlit
+Variables:
 
+* Rainfall
+* Rainfall Anomaly
 
+---
 
-# 13. PROJECT ARCHITECTURE
+# 8. DATABASE DEVELOPMENT
 
-Data Sources
-↓
-Web Scraping
-↓
-SQL Database
-↓
+A SQLite database was developed to store:
+
+```text
+Food Security Data
+Market Price Data
+Rainfall Data
+Merged Dataset
+```
+
+Database Workflow:
+
+```text
+Raw Datasets
+       ↓
+SQLite Database
+       ↓
 Data Cleaning
-↓
-EDA
-↓
-Feature Engineering
-↓
-Food Security Index
-↓
-Forecasting Models
-↓
-Dashboard Development
-↓
-Reporting
+       ↓
+Data Integration
+       ↓
+Forecasting Dataset
+```
 
+---
 
-# 14. METHODOLOGY
+# 9. TARGET VARIABLE
 
-Phase 1: Data Collection
+## Primary Target
 
-Collect data from identified sources.
+### IPC3plus Population
 
-Output:
+Definition:
 
-Raw datasets.
+Number of people classified in IPC Phase 3 or higher.
 
+These phases represent:
 
+* Crisis
+* Emergency
+* Catastrophe
 
-Phase 2: Database Development
+Higher values indicate worsening food insecurity.
 
-Store datasets in SQL.
+---
 
-Output:
+# 10. FEATURE VARIABLES
 
-Centralized database.
+## Food Security Features
 
+* IPC3plus Fraction
 
+## Market Features
 
-Phase 3: Data Cleaning
+* Maize Price
+* Bean Price
 
-Perform:
+## Climate Features
 
-* Missing value handling
-* Duplicate removal
-* Standardization
-* Validation
+* Rainfall
+* Rainfall Anomaly
 
-Output:
+## Time-Series Features
 
-Clean dataset.
+* Lag1
+* Lag2
+* Lag4
+* Rolling2
+* Rolling4
+* Month_Sin
+* Month_Cos
 
+---
 
+# 11. METHODOLOGY
 
-Phase 4: Exploratory Data Analysis
+### Phase 1: Data Collection
 
-Analyze:
+Collect food security, market price, and rainfall data.
+
+### Phase 2: SQL Integration
+
+Store datasets in SQLite.
+
+### Phase 3: Data Cleaning
+
+* Standardize county names
+* Convert dates
+* Handle missing values
+* Remove duplicates
+
+### Phase 4: Data Integration
+
+Merge datasets using:
+
+```text
+County
+Month
+```
+
+### Phase 5: Feature Engineering
+
+Generate:
+
+* Lag Features
+* Rolling Statistics
+* Seasonal Features
+
+### Phase 6: Exploratory Data Analysis
+
+Investigate:
 
 * Trends
-* Correlations
 * Seasonality
-* Outliers
+* Correlations
+* County-level patterns
 
-Output:
+### Phase 7: Forecasting
 
-Insights and visualizations.
+Develop and compare forecasting models.
 
+---
 
+# 12. FORECASTING MODELS
 
-Phase 5: Feature Engineering
-
-Create meaningful variables for forecasting.
-
-Output:
-
-Model-ready dataset.
-
-
-
-Phase 6: Food Security Index Construction
-
-Combine the four food security pillars into one composite index.
-
-Output:
-
-Food Security Index.
-
-
-
-# 16. FOOD SECURITY INDEX CONSTRUCTION
-
-Food Security Index (FSI)
-
-=
-
-Food Availability Score
-
-*
-
-Food Access Score
-
-*
-
-Food Affordability Score
-
-*
-
-Food Quality Score
-
-÷ 4
-
-The FSI becomes the main target variable for forecasting.
-
-
-
-# 17. FORECASTING AND PREDICTIVE MODELING
-
-## 17.1 ARIMA
+## 12.1 Naive Forecast
 
 Purpose:
 
-Traditional time-series forecasting benchmark.
+Benchmark model.
 
-How it works:
+Method:
 
-ARIMA forecasts future values using historical observations, trends, and forecasting errors.
+Future food insecurity is assumed to be equal to the most recent observation.
 
-Why use it:
+Why:
 
-Provides a strong statistical baseline and demonstrates classical forecasting techniques.
+Provides the minimum performance threshold all other models must beat.
 
+---
 
-
-## 17.2 Linear Regression
-
-Purpose:
-
-Baseline machine learning model.
-
-How it works:
-
-Learns a linear relationship between predictors and food security outcomes.
-
-Why use it:
-
-Simple and interpretable benchmark.
-
-
-
-## 17.3 Decision Tree 
+## 12.2 SARIMAX
 
 Purpose:
 
-Capture non-linear relationships.
+Classical multivariate time-series forecasting.
+
+Inputs:
+
+* Maize Price
+* Bean Price
+* Rainfall
+* Rainfall Anomaly
 
 How it works:
 
-Creates decision rules based on feature splits.
+SARIMAX extends ARIMA by incorporating external variables that influence food insecurity.
 
-Why use it:
+Why:
 
-Easy to interpret.
+Provides interpretable statistical relationships between food security and its drivers.
 
+---
 
-
-## 17.4 Random Forest
+## 12.3 XGBoost
 
 Purpose:
 
-Improve predictive accuracy.
+Machine learning forecasting.
+
+Inputs:
+
+* Prices
+* Rainfall
+* Lag Features
+* Rolling Features
+* Seasonal Features
 
 How it works:
 
-Combines predictions from multiple decision trees.
+Builds sequential decision trees that learn complex nonlinear relationships.
 
-Why use it:
+Why:
 
-Reduces overfitting and improves robustness.
+Often performs exceptionally well on tabular forecasting data.
 
+Expected Outcome:
 
+Likely strongest performer in this study.
 
-## 17.5 Long Short-Term Memory (LSTM)
+---
+
+## 12.4 Long Short-Term Memory (LSTM)
 
 Purpose:
 
 Deep learning forecasting.
 
-How it works:
+Inputs:
 
-Uses memory cells and gates to learn long-term temporal relationships.
-
-Why use it:
-
-Food security depends on long-term agricultural, climate, and economic trends.
-
-
-
-## 17.6 Gated Recurrent Unit (GRU)
-
-Purpose:
-
-Efficient deep learning forecasting.
+Sequential historical observations.
 
 How it works:
 
-Uses update and reset gates to retain important information while reducing complexity.
+Uses memory cells to learn long-term temporal patterns.
 
-Why use it:
+Why:
 
-Faster training and often similar performance to LSTM.
+Food insecurity is influenced by cumulative climatic and economic conditions over time.
 
+---
 
+# 13. MODEL EVALUATION
 
-# 18. MODEL EVALUATION
+Models will be compared using:
 
-Evaluation Metrics
+### MAE
 
-* MAE
-* RMSE
-* R² Score
+Mean Absolute Error
 
-Comparison Objective
+### RMSE
 
-Determine whether advanced models outperform traditional forecasting methods.
+Root Mean Squared Error
 
+### MAPE
 
+Mean Absolute Percentage Error
 
-# 19. DASHBOARD DEVELOPMENT
+### R²
 
+Coefficient of Determination
 
-Tableau Dashboard
+---
 
-* Food Security Index Monitoring
-* Interactive Trend Analysis
-* Forecast Visualization
+# 14. EXPECTED DELIVERABLES
 
-
-
-# 20. GITHUB REPOSITORY STRUCTURE
-
-food-security-intelligence-platform/
-
-├── data/
-
-├── database/
-
-├── scraping/
-
-├── models/
-
-├── results/
-
-├── dashboards/
-
-├── notebooks/
-
-├── reports/
-
-├── src/
-
-├── app/
-
-├── requirements.txt
-
-├── README.md
-
-└── .gitignore
-
-
-
-# 21. EXPECTED DELIVERABLES
-
-* SQL Database
-* Web Scrapers
-* Clean Dataset
-* Food Security Index
+* SQLite Database
+* Clean Integrated Dataset
+* Exploratory Analysis Report
+* Forecasting Models
+* Model Comparison Report
 * Tableau Dashboard
-* ARIMA Forecasting Model
-* Machine Learning Models
-* Deep Learning Models
-* Forecast Reports
-* Streamlit Application
 * GitHub Repository
+* Final Research Report
 
 
-
-# 22. EXPECTED IMPACT
-
-The platform will provide data-driven insights for monitoring and forecasting food security conditions, supporting evidence-based planning and policy development.
