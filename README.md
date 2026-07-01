@@ -8,7 +8,14 @@
 
 Food insecurity remains one of the most pressing humanitarian and socioeconomic challenges in Kenya. The country frequently experiences droughts, erratic rainfall, conflicts, economic shocks, and other factors that significantly affect household food security, particularly within the arid and semi-arid lands (ASALs). Timely forecasting of food security conditions is therefore essential for governments, humanitarian organizations, and policymakers to implement early interventions, allocate resources efficiently, and minimize the impact of food crises.
 
-The Integrated Food Security Phase Classification (IPC) is an internationally recognized analytical framework used to assess and classify the severity of food insecurity. The IPC categorizes food security conditions into five phases ranging from Minimal (Phase 1) to Famine (Phase 5), enabling consistent monitoring and comparison of food security conditions across regions and over time.
+ Integrated Food Security Phase Classification (IPC)The IPC is a global initiative used to determine the severity and magnitude of food insecurity and malnutrition. It doesn't rely on a single math equation, but rather on a consolidated technical consensus.The Process: Analysts evaluate data on food consumption, livelihood changes, nutritional status, and mortality.
+ The Scale: The IPC categorizes food security conditions into five phases ranging from Minimal (Phase 1) to Famine (Phase 5), enabling consistent monitoring and comparison of food security conditions across regions and over time as follows:
+
+ 1.None/Minimal
+ 2.Stressed
+ 3.Crisis
+ 4.Emergency
+ 5.Catastrophe / Famine 
 
 Recent advances in artificial intelligence have demonstrated that machine learning and deep learning techniques can identify complex temporal patterns within historical data. Statistical forecasting models such as AutoRegressive Integrated Moving Average (ARIMA) remain widely used because of their simplicity and interpretability, while machine learning algorithms such as Random Forest and Extreme Gradient Boosting (XGBoost) capture nonlinear relationships within structured data. Long Short-Term Memory (LSTM) networks, a specialized form of recurrent neural network, have become particularly effective for sequential forecasting because they learn long-term temporal dependencies.
 
@@ -154,21 +161,131 @@ Four forecasting models will be developed and compared.
 
 ### AutoRegressive Integrated Moving Average (ARIMA)
 
-ARIMA will serve as the classical statistical forecasting model. It will establish a benchmark by modeling temporal relationships within historical IPC observations.
+ARIMA will serve as the classical statistical forecasting model. It will establish a benchmark by modeling temporal relationships within historical IPC observations. 
+
+How does it work:
+
+An ARIMA model is a powerful statistical algorithm used for forecasting future data points in a time series based on its own historical values. It stands for AutoRegressive Integrated Moving Average and works by combining three mathematical concepts to break down and predict data patterns.
+
+The Three Core Components (p, d, q)
+
+An ARIMA model is defined by three main parameters, written as ARIMA(p, d, q):
+
+ AR (AutoRegressive) - Parameter p: The model predicts the future by looking at a specific number of past values (lags). If p=2, today's forecast is heavily based on what happened yesterday and the day before.
+ 
+ I (Integrated) - Parameter d: This represents the number of differencing steps required to make the data "stationary". Stationarity means the data's mean and variance remain constant over time. Trends or long-term growth are subtracted out to focus strictly on local shifts
+
+ MA (Moving Average) - Parameter q: Instead of using past values, the MA component looks at past forecast errors (residuals). If the model overshot yesterday's prediction due to an unexpected event, it utilizes a fraction of that error to self-correct today’s prediction.
+
+ The Image below shows how it works:
+
+ ![alt text](image.png)
+
 
 ### Random Forest
 
 Random Forest will be used as a machine learning model capable of learning nonlinear relationships while providing robustness against overfitting.
 
+How does it work:
+
+Random Forest is an ensemble machine learning algorithm that combines many Decision Trees to make better predictions.
+
+How it works:
+Start with your dataset.
+
+Create many random samples from the dataset (called bootstrapping).
+
+Train a separate decision tree on each sample.
+
+Each tree makes its own prediction.
+
+Combine all predictions:
+
+Classification → majority vote
+Regression → average prediction
+
+Key idea:
+
+Instead of trusting one tree, trust the wisdom of many trees.
+
+![alt text](image-1.png)
+
 ### Extreme Gradient Boosting (XGBoost)
 
 XGBoost will be implemented because of its strong predictive performance on structured datasets and its ability to model complex nonlinear interactions.
+
+How does it work:
+
+XGBoost is an advanced implementation of Gradient Boosting.
+
+Unlike Random Forest (where trees work independently), XGBoost builds trees sequentially, where each new tree learns from previous mistakes.
+
+How it works:
+
+Train the first decision tree.
+
+Measure prediction errors.
+
+Build the next tree to correct those errors.
+
+Repeat many times.
+
+Combine all trees for final prediction.
+
+
+Key idea:
+
+Each new tree says:
+
+“Let me fix what the previous trees got wrong.”
+
+![alt text](image-2.png)
+
 
 ### Long Short-Term Memory (LSTM)
 
 LSTM will serve as the primary deep learning model. Unlike conventional forecasting models, LSTM networks are specifically designed for sequential data and can capture long-term temporal dependencies within historical IPC observations.
 
----
+How it works:
+
+LSTM processes data one step at a time, remembering important information and forgetting irrelevant information.
+
+It has a memory cell and three gates:
+
+1. Forget Gate
+
+Decides what information to discard.
+
+Example:
+
+Old rainfall patterns may no longer matter.
+
+2. Input Gate
+
+Decides what new information to store.
+
+Example:
+
+Current drought conditions are important.
+
+3. Output Gate
+
+Decides what information to use for prediction.
+
+Example:
+
+Predict next month’s crop yield.
+
+Key idea:
+
+LSTM acts like a memory system:
+
+Keep useful past information
+Forget irrelevant information
+Use important patterns to predict the future
+
+![alt text](image-3.png) 
+
 
 ## Phase 6: Model Evaluation
 
