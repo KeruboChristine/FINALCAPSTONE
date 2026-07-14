@@ -2,10 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import os
+import datetime
+import traceback
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import joblib 
-
 
 # =========================================================
 # 1. LOAD THE EXACT EXPORTED TRAINING ASSETS
@@ -34,10 +35,11 @@ def load_lstm_assets():
             
     return model, scaler
 
-# FIXED: Initialize the variable to False by default
+# Initialize the state tracking flag
 assets_loaded = False
 
 try:
+    # Diagnostic path tracker in the sidebar
     st.sidebar.info(f"📂 Current App Directory: `{os.getcwd()}`")
     
     lstm_model, training_scaler = load_lstm_assets()
@@ -52,10 +54,12 @@ try:
         
         raise FileNotFoundError(f"Missing components: {', '.join(missing_components)}. Found these related files: {matching_files}")
     
-    # FIXED: Explicitly set to True when loading succeeds
     assets_loaded = True
 except Exception as e:
-    st.error(f"❌ Asset loading error!\n\n{e}")
+    # Expose the precise traceback on screen to figure out the runtime issue instantly
+    error_trace = traceback.format_exc()
+    st.error(f"❌ Asset Pipeline Failure!\n\n**Error Type:** `{type(e).__name__}`\n\n**Details:** {e}")
+    st.code(error_trace, language="python")
     assets_loaded = False
 
 # =========================================================
@@ -92,7 +96,7 @@ lag_1 = st.sidebar.number_input("Previous Month IPC Value (t-1)", min_value=1.0,
 if st.sidebar.button("🚀 Run Prediction Analysis"):
     
     if not assets_loaded:
-        st.error("Prediction halted: Missing required model or scaler components.")
+        st.error("Prediction halted: Missing required model or scaler components due to initialization errors shown above.")
     else:
         # 1. Arrange history into chronological training sequence order: [t-3, t-2, t-1]
         raw_sequence = np.array([[lag_3], [lag_2], [lag_1]]) # Shape: (3, 1)
@@ -111,7 +115,7 @@ if st.sidebar.button("🚀 Run Prediction Analysis"):
         scaled_prediction = lstm_model.predict(lstm_input)
         
         # 5. Inverse transform predictions back to real-world 1.0 - 5.0 index scale
-        real_prediction = float(training_scaler.inverse_transform(scaled_prediction.reshape(-1, 1))[0, 0])
+        real_prediction = float(training_scaler.inverse_transform(scaled_prediction.reshape(-1, 1)))
         
         # Clip outputs edge-case boundaries safely between 1.0 and 5.0
         real_prediction = max(1.0, min(5.0, real_prediction))
