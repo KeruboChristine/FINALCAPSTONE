@@ -28,8 +28,9 @@ def load_lstm_assets_safely():
     model_options = ["LSTM_Model.h5", "lstm_model.h5", "Lstm_Model.h5", "LSTM_Model.keras", "lstm_model.keras"]
     for option in model_options:
         if os.path.exists(option):
-            # FIXED: Added by_name=True to resolve the Streamlit Cloud server constraint
-            model.load_weights(option, by_name=True, skip_mismatch=True)
+            # FIXED: Removed by_name and skip_mismatch parameters to allow 
+            # safe chronological/topological weight loading onto the cloud server.
+            model.load_weights(option)
             model_loaded = True
             break
             
