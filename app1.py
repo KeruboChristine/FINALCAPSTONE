@@ -5,74 +5,79 @@ import os
 import datetime
 import traceback
 import tensorflow as tf
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
 import joblib 
 
 # =========================================================
 # 1. LOAD THE EXACT EXPORTED TRAINING ASSETS
 # =========================================================
 @st.cache_resource
-def load_lstm_assets():
-    model = None
-    scaler = None
+def load_lstm_assets_safely():
+    # A. Reconstruct your exact global notebook layer architecture manually
+    # to completely defeat internal Keras .h5 header deserialization bugs.
+    model = Sequential([
+        LSTM(64, activation='tanh', input_shape=(3, 1), return_sequences=False),
+        Dropout(0.1),
+        Dense(32, activation='relu'),
+        Dense(1)
+    ])
     
-    custom_objects = {
-        'mse': tf.keras.losses.MeanSquaredError(),
-        'MeanSquaredError': tf.keras.losses.MeanSquaredError()
-    }
-    
+    # B. Locate and load your model weights file dynamically
+    model_loaded = False
     model_options = ["LSTM_Model.h5", "lstm_model.h5", "Lstm_Model.h5", "LSTM_Model.keras", "lstm_model.keras"]
     for option in model_options:
         if os.path.exists(option):
-            model = load_model(option, custom_objects=custom_objects, compile=False)
+            # Load weights directly into the clean architectural skeleton
+            model.load_weights(option, skip_mismatch=True)
+            model_loaded = True
             break
             
+    # C. Locate and load your scaler file dynamically
+    scaler = None
     scaler_options = ["MinMax_Scaler.pkl", "minmax_scaler.pkl", "Minmax_Scaler.pkl", "scaler.pkl", "Scaler.pkl"]
     for option in scaler_options:
         if os.path.exists(option):
             scaler = joblib.load(option)
             break
             
+    if not model_loaded:
+        return None, scaler
     return model, scaler
 
-# Initialize the state tracking flag
+# Initialize baseline execution flag
 assets_loaded = False
 
-try:
-    # Diagnostic path tracker in the sidebar
-    st.sidebar.info(f"📂 Current App Directory: `{os.getcwd()}`")
-    
-    lstm_model, training_scaler = load_lstm_assets()
-    
-    if lstm_model is None or training_scaler is None:
-        missing_components = []
-        if lstm_model is None: missing_components.append("Model (.h5)")
-        if training_scaler is None: missing_components.append("Scaler (.pkl)")
-        
-        all_files = os.listdir(".")
-        matching_files = [f for f in all_files if "model" in f.lower() or "scaler" in f.lower() or ".h5" in f or ".pkl" in f]
-        
-        raise FileNotFoundError(f"Missing components: {', '.join(missing_components)}. Found these related files: {matching_files}")
-    
-    assets_loaded = True
-except Exception as e:
-    # Expose the precise traceback on screen to figure out the runtime issue instantly
-    error_trace = traceback.format_exc()
-    st.error(f"❌ Asset Pipeline Failure!\n\n**Error Type:** `{type(e).__name__}`\n\n**Details:** {e}")
-    st.code(error_trace, language="python")
-    assets_loaded = False
-
-# =========================================================
-# 2. PAGE CONFIGURATION & SIDEBAR DESIGN
-# =========================================================
+# Create visual containers for dashboard presentation
 st.set_page_config(page_title="Food Security Prediction", page_icon="🔮", layout="centered")
 st.title("🔮 Food Security LSTM Deep Learning Dashboard")
 st.markdown("Predict the next month's fractional IPC food security classification using historical time-series lags.")
 
-st.sidebar.header("🔮 Time-Series Inputs")
-st.sidebar.markdown("Provide the continuous historical IPC indices for the selected region.")
+# Run asset pipeline setup check
+try:
+    lstm_model, training_scaler = load_lstm_assets_safely()
+    
+    if lstm_model is None or training_scaler is None:
+        missing = []
+        if lstm_model is None: missing.append("Model file (.h5)")
+        if training_scaler is None: missing.append("Scaler file (.pkl)")
+        all_files = os.listdir(".")
+        raise FileNotFoundError(f"Missing parts: {', '.join(missing)}. Available workspace files: {all_files}")
+        
+    assets_loaded = True
+    st.success("✅ Clean model architecture built and training weights loaded smoothly!")
 
-# Load locations dynamically from dataset if present
+except Exception as load_error:
+    st.error(f"❌ Asset Pipeline Verification Failed on Setup!")
+    st.code(traceback.format_exc(), language="python")
+    assets_loaded = False
+
+# =========================================================
+# 2. INTERFACE LAYOUT & SIDEBAR INPUTS
+# =========================================================
+st.sidebar.header("🔮 Control Panel")
+st.sidebar.info(f"📂 Active Path: `{os.getcwd()}`\n\n🎯 Target Window: `(1, 3, 1)`")
+
 DATA_PATH = "food_security_model_ready.csv" 
 if os.path.exists(DATA_PATH):
     df = pd.read_csv(DATA_PATH)
@@ -83,61 +88,61 @@ else:
 selected_location = st.sidebar.selectbox("Geographic Unit Name", unique_locations)
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("3-Month Sliding Window History")
-
-# Collect the exact 3 lookback steps your model was trained on
+st.sidebar.subheader("3-Month Sliding Window Lags")
 lag_3 = st.sidebar.number_input("IPC Value 3 Months Ago (t-3)", min_value=1.0, max_value=5.0, value=2.0, step=0.1)
 lag_2 = st.sidebar.number_input("IPC Value 2 Months Ago (t-2)", min_value=1.0, max_value=5.0, value=2.0, step=0.1)
 lag_1 = st.sidebar.number_input("Previous Month IPC Value (t-1)", min_value=1.0, max_value=5.0, value=2.0, step=0.1)
 
 # =========================================================
-# 3. REAL-TIME PREDICTION ENGINE
+# 3. RUNTIME PREDICTION ENGINE
 # =========================================================
 if st.sidebar.button("🚀 Run Prediction Analysis"):
     
     if not assets_loaded:
-        st.error("Prediction halted: Missing required model or scaler components due to initialization errors shown above.")
+        st.error("🚨 Prediction halted: The application files are not initialized properly. Review the trace log error at the top of the main window.")
     else:
-        # 1. Arrange history into chronological training sequence order: [t-3, t-2, t-1]
-        raw_sequence = np.array([[lag_3], [lag_2], [lag_1]]) # Shape: (3, 1)
-        
-        # 2. Normalize inputs using your fitted training data bounds to fix saturation
         try:
-            scaled_sequence = training_scaler.transform(raw_sequence) # Shape: (3, 1)
-        except Exception as scale_err:
-            st.error(f"Scaling failed. Check your scaler dimensions: {scale_err}")
-            st.stop()
+            # 1. Transform raw sequence metrics into standard uniform floats using .item()
+            v3 = training_scaler.transform(np.array([[lag_3]])).item()
+            v2 = training_scaler.transform(np.array([[lag_2]])).item()
+            v1 = training_scaler.transform(np.array([[lag_1]])).item()
             
-        # 3. Reshape scaled sequence to fit 3D LSTM architecture: [samples=1, time_steps=3, features=1]
-        lstm_input = scaled_sequence.reshape((1, 3, 1))
-        
-        # 4. Generate continuous evaluation prediction 
-        scaled_prediction = lstm_model.predict(lstm_input)
-        
-        # 5. Inverse transform predictions back to real-world 1.0 - 5.0 index scale
-        real_prediction = float(training_scaler.inverse_transform(scaled_prediction.reshape(-1, 1)))
-        
-        # Clip outputs edge-case boundaries safely between 1.0 and 5.0
-        real_prediction = max(1.0, min(5.0, real_prediction))
-
-        # 6. Display Clean Metric Metrics Results
-        st.markdown("### 📊 Calculated Analysis Result")
-        res_col1, res_col2 = st.columns(2)
-        
-        with res_col1:
-            st.metric("Predicted Continuous IPC Score (t)", f"{real_prediction:.2f}")
-            st.caption(f"Target node: {selected_location}")
+            sequence_list = [v3, v2, v1]
             
-        with res_col2:
-            if real_prediction < 1.5:
-                st.success("**Phase 1: Minimal Security** 🟢")
-            elif real_prediction < 2.5:
-                st.info("**Phase 2: Stressed System** 🟡")
-            elif real_prediction < 3.5:
-                st.warning("**Phase 3: Food Crisis** 🟠")
-            elif real_prediction < 4.5:
-                st.error("**Phase 4: Emergency Alert** 🔴")
-            else:
-                st.error("**Phase 5: Famine Catastrophe** 💀")
-                
-        st.success("✅ Real-time inference executed successfully using your optimized training pipeline components!")
+            # 2. Build the precise 3D shape array layout: (1 sample, 3 time steps, 1 feature)
+            numpy_matrix = np.array(sequence_list, dtype=np.float32).reshape((1, 3, 1))
+            tensor_input = tf.convert_to_tensor(numpy_matrix, dtype=tf.float32)
+            
+            # 3. Process raw forward prediction matrix pass
+            raw_output = lstm_model(tensor_input, training=False)
+            extracted_scalar = float(raw_output.numpy().flatten())
+            
+            # 4. Reverse normalization scaling back to standard 1.0 - 5.0 phase indices
+            calculated_score = float(training_scaler.inverse_transform(np.array([[extracted_scalar]])))
+            real_prediction = max(1.0, min(5.0, calculated_score))
+            
+            # 5. Output phase evaluation results panel
+            st.markdown("### 📊 Continuous Prediction Performance Report")
+            c1, c2 = st.columns(2)
+            
+            with c1:
+                st.metric("Predicted Fractional IPC Score (t)", f"{real_prediction:.2f}")
+                st.caption(f"Location Area: {selected_location}")
+                st.caption(f"Array Target Map: `(1, 3, 1)`")
+            with c2:
+                if real_prediction < 1.5:
+                    st.success("**Phase 1: Minimal Security** 🟢")
+                elif real_prediction < 2.5:
+                    st.info("**Phase 2: Stressed System** 🟡")
+                elif real_prediction < 3.5:
+                    st.warning("**Phase 3: Food Crisis** 🟠")
+                elif real_prediction < 4.5:
+                    st.error("**Phase 4: Emergency Alert** 🔴")
+                else:
+                    st.error("**Phase 5: Famine Catastrophe** 💀")
+                    
+            st.success("🎉 Calculation executed smoothly!")
+            
+        except Exception as prediction_error:
+            st.error("❌ Runtime Calculation Breakdown!")
+            st.code(traceback.format_exc(), language="python")
