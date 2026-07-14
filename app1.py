@@ -28,8 +28,8 @@ def load_lstm_assets_safely():
     model_options = ["LSTM_Model.h5", "lstm_model.h5", "Lstm_Model.h5", "LSTM_Model.keras", "lstm_model.keras"]
     for option in model_options:
         if os.path.exists(option):
-            # Load weights directly into the clean architectural skeleton
-            model.load_weights(option, skip_mismatch=True)
+            # FIXED: Added by_name=True to resolve the Streamlit Cloud server constraint
+            model.load_weights(option, by_name=True, skip_mismatch=True)
             model_loaded = True
             break
             
@@ -62,7 +62,7 @@ try:
         if lstm_model is None: missing.append("Model file (.h5)")
         if training_scaler is None: missing.append("Scaler file (.pkl)")
         all_files = os.listdir(".")
-        raise FileNotFoundError(f"Missing parts: {', '.join(missing)}. Available workspace files: {all_files}")
+        raise FileNotFoundError(f"Missing pieces: {', '.join(missing)}. Available workspace files: {all_files}")
         
     assets_loaded = True
     st.success("✅ Clean model architecture built and training weights loaded smoothly!")
