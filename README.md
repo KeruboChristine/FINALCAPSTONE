@@ -294,10 +294,7 @@ The forecasting performance of each model will be evaluated using appropriate pe
 * Mean Absolute Error (MAE)
 * Root Mean Squared Error (RMSE)
 * Mean Absolute Percentage Error (MAPE)
-* Accuracy
-* Precision
-* Recall
-* F1-score
+* R-Squared
 
 The evaluation will compare forecasting accuracy, robustness, and generalization ability across the four models.
 
